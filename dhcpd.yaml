@@ -1,0 +1,30 @@
+kind: Deployment
+metadata:
+  name: dhcpd
+  labels:
+    app: dhcpd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dhcpd
+  template:
+    metadata:
+      labels:
+        app: dhcpd
+    spec:
+      volumes:
+        - name: dhcpd
+          configMap:
+            name: dhcpd
+            items:
+              - key: dhcpd.conf
+                path: dhcpd.conf
+      containers:
+        - name: dhcpd
+          image: networkboot/dhcpd
+          volumeMounts:
+            - mountPath: /etc/namedb/gitlab.db
+              name: gitlabconf
+          ports:
+            - containerPort: 53

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bind9
+data:
+  named.conf: |
+    options {
+      directory "/etc/bind;
+      allow-query-cache { none; };
+      allow-query { any; };
+      recursion no;
+     };
+
+     zone "gitlab" {
+        type master;
+        file "giltab.db"
+     }
+
+  gitlab.db: |
+    $TTL 2d
+    $ORIGIN gitlab.
+    @         IN      SOA   ns1.girlab. hostmaster.gitlab. (
+                                    2003080800 ; serial number
+                                    12h        ; refresh
+                                    15m        ; update retry
+                                    3w         ; expiry
+                                    2h         ; minimum
+                                    )
+    *        IN      A   192.168.1.10
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dhcpd
+data:
+  dhcpd.conf: |
+    subnet 192.168.200.0/24 netmask 255.255.255.0 {
+      range 192.168.200.20 192.168.200.30;
+      option routers 192.168.200.10;
+      option domain-name-servers 192.168.200.10;
+    }

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bind
+  labels:
+    app: bind
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bind
+  template:
+    metadata:
+      labels:
+        app: bind
+    spec:
+      volumes:
+        - name: bind9
+          configMap:
+            name: bind9
+            items:
+              - key: named.conf
+                path: named.conf
+              - key: gitlab.db
+                path: gitlab.db
+      containers:
+        - name: bind9
+          image: ubuntu/bind9
+          volumeMounts:
+            - mountPath: /etc/bind/
+              name: bind9
+          ports:
+            - containerPort: 53
